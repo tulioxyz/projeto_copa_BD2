@@ -38,54 +38,6 @@ df['idade'] = df['data_nascimento'].apply(lambda x: (pd.Timestamp.now() - x).day
 
 
 #Edu
-st.markdown("---")
-
-st.subheader("🥇 Top 10 Maiores Goleadores")
-
-top10 = df.sort_values(by="gols", ascending=False).head(10)
-
-fig_top10 = px.bar(
-    top10,
-    x="gols",
-    y="nome",
-    orientation="h",
-    text="gols",
-    color="gols",
-    labels={
-        "nome": "Jogador",
-        "gols": "Gols"
-    }
-)
-
-fig_top10.update_layout(
-    title_x=0.5,
-    yaxis=dict(categoryorder="total ascending"),
-    coloraxis_showscale=False
-)
-
-st.plotly_chart(fig_top10, use_container_width=True)
-
-st.markdown("---")
-
-st.subheader("📊 Quantidade de Jogadores por Posição")
-
-grafico_posicao = df["posicao"].value_counts().reset_index()
-grafico_posicao.columns = ["Posição", "Quantidade"]
-
-fig_posicao = px.bar(
-    grafico_posicao,
-    x="Posição",
-    y="Quantidade",
-    text="Quantidade",
-    color="Posição"
-)
-
-fig_posicao.update_layout(
-    title_x=0.5,
-    yaxis_title="Quantidade de Jogadores"
-)
-
-st.plotly_chart(fig_posicao, use_container_width=True)
 
 
 
