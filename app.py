@@ -55,6 +55,7 @@ fig_gols.update_layout(
     yaxis_title="Jogador",
     height=700, 
     coloraxis_showscale=False 
+)
 
 st.plotly_chart(fig_gols, use_container_width=True)
 
