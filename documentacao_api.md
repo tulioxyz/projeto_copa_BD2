@@ -9,7 +9,7 @@ Esta documentação serve como referência para entender os endpoints disponíve
 Para qualquer requisição à API-Sports, você precisa enviar a sua chave de autenticação nos cabeçalhos (headers) da requisição.
 
 * **Base URL**: `https://v3.football.api-sports.io`
-* **Header de Autenticação**: `x-apisports-key: 3b317cf02218c6ab25fae3d8d61e2c17`
+* **Header de Autenticação**: `x-apisports-key: SUA_CHAVE_API`
 * **ID da Copa do Mundo (World Cup)**: `league=1`
 * **ID da Seleção Brasileira**: `team=6`
 

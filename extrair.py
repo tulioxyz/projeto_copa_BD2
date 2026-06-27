@@ -1,9 +1,12 @@
 import os
 import requests
 import pandas as pd
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # API-Sports
-API_KEY = "3b317cf02218c6ab25fae3d8d61e2c17"
+API_KEY = os.getenv("API_KEY")
 TEAM_ID = 6  
 headers = {
     "x-apisports-key": API_KEY

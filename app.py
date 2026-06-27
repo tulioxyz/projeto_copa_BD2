@@ -9,6 +9,28 @@ st.set_page_config(
     layout="wide"
 )
 
+st.markdown("""
+    <style>
+    .main-title {
+        font-size: 2.5rem;
+        color: #009c3b;
+        text-align: center;
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+    }
+    .subtitle {
+        font-size: 1.2rem;
+        color: #002776;
+        text-align: center;
+        margin-bottom: 2rem;
+        font-weight: 500;
+    }
+    </style>
+""", unsafe_allow_html=True)
+
+st.markdown('<div class="main-title">⚽ Seleção Brasileira - Copa do Mundo</div>', unsafe_allow_html=True)
+st.markdown('<div class="subtitle">Artilharia do Elenco</div>', unsafe_allow_html=True)
+
 # Carregar dados
 df = pd.read_csv("dados/jogadores_brasil_convocados_copa_2026.csv")
 df['data_nascimento'] = pd.to_datetime(df['data_nascimento'])
@@ -68,28 +90,6 @@ st.plotly_chart(fig_posicao, use_container_width=True)
 
 
 #testes
-st.markdown("""
-    <style>
-    .main-title {
-        font-size: 2.5rem;
-        color: #009c3b;
-        text-align: center;
-        font-weight: bold;
-        margin-bottom: 0.5rem;
-    }
-    .subtitle {
-        font-size: 1.2rem;
-        color: #002776;
-        text-align: center;
-        margin-bottom: 2rem;
-        font-weight: 500;
-    }
-    </style>
-""", unsafe_allow_html=True)
-
-st.markdown('<div class="main-title">⚽ Seleção Brasileira - Copa do Mundo</div>', unsafe_allow_html=True)
-st.markdown('<div class="subtitle">Artilharia do Elenco</div>', unsafe_allow_html=True)
-
 df_gols = df.sort_values(by='gols', ascending=True)
 
 fig_gols = px.bar(
