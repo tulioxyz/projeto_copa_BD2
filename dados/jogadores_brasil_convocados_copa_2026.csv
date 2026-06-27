@@ -1,4 +1,4 @@
-id,no,pos,name,dob,caps,goals,club,clubNat,clubWiki,captain,wiki,wcApps,wcGoals,wcYellow,wcRed
+id,numero,posicao,nome,data_nascimento,jogos,gols,clube,pais_clube,wikipedia_clube,capitao,wikipedia_jogador,jogos_copa,gols_copa,cartoes_amarelos_copa,cartoes_vermelhos_copa
 alisson,1,GK,Alisson,1992-10-02,78,0,Liverpool,ENG,https://en.wikipedia.org/wiki/Liverpool_F.C.,False,https://en.wikipedia.org/wiki/Alisson_Becker,3,0,0,0
 weverton,12,GK,Weverton,1987-12-13,11,0,Grêmio,BRA,https://en.wikipedia.org/wiki/Gr%C3%AAmio_FBPA,False,https://en.wikipedia.org/wiki/Weverton_(footballer%2C_born_1987),0,0,0,0
 ederson-moraes,23,GK,Ederson Moraes,1993-08-17,32,0,Fenerbahçe,TUR,https://en.wikipedia.org/wiki/Fenerbah%C3%A7e_S.K._(football),False,https://en.wikipedia.org/wiki/Ederson_(footballer%2C_born_1993),0,0,0,0

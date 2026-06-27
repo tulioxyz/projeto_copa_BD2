@@ -19,5 +19,24 @@ data = response.json()
 
 df = pd.json_normalize(data['players'])
 
+df = df.rename(columns={
+    'no': 'numero',
+    'pos': 'posicao',
+    'name': 'nome',
+    'dob': 'data_nascimento',
+    'caps': 'jogos',
+    'goals': 'gols',
+    'club': 'clube',
+    'clubNat': 'pais_clube',
+    'clubWiki': 'wikipedia_clube',
+    'captain': 'capitao',
+    'wiki': 'wikipedia_jogador',
+    'wcApps': 'jogos_copa',
+    'wcGoals': 'gols_copa',
+    'wcYellow': 'cartoes_amarelos_copa',
+    'wcRed': 'cartoes_vermelhos_copa'
+})
+
+# Salva na pasta dados/
 caminho_csv = os.path.join('dados', 'jogadores_brasil_convocados_copa_2026.csv')
 df.to_csv(caminho_csv, index=False)

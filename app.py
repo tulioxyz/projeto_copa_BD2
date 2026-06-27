@@ -31,39 +31,45 @@ st.markdown("""
 st.markdown('<div class="main-title">⚽ Seleção Brasileira - Copa do Mundo</div>', unsafe_allow_html=True)
 st.markdown('<div class="subtitle">Artilharia do Elenco</div>', unsafe_allow_html=True)
 
-# Leitura direta do CSV
 df = pd.read_csv("dados/jogadores_brasil_convocados_copa_2026.csv")
 
-# Calcula a idade
-df['dob'] = pd.to_datetime(df['dob'])
-df['idade'] = df['dob'].apply(lambda x: (pd.Timestamp.now() - x).days // 365)
+df['data_nascimento'] = pd.to_datetime(df['data_nascimento'])
+df['idade'] = df['data_nascimento'].apply(lambda x: (pd.Timestamp.now() - x).days // 365)
 
-# Gráfico de barras horizontais bonito com todos os atletas ordenados por gols
-df_gols = df.sort_values(by='goals', ascending=True)
+df_gols = df.sort_values(by='gols', ascending=True)
 
 fig_gols = px.bar(
     df_gols,
-    x='goals',
-    y='name',
+    x='gols',
+    y='nome',
     orientation='h',
     title='Quantidade de Gols por Atleta',
-    labels={'goals': 'Gols Marcados', 'name': 'Jogador'},
-    color='goals',
-    color_continuous_scale=['#ffdf00', '#009c3b'] # Gradiente amarelo para verde
+    labels={'gols': 'Gols Marcados', 'nome': 'Jogador'},
+    color='gols',
+    color_continuous_scale=['#ffdf00', '#009c3b']
 )
 
 fig_gols.update_layout(
     title_x=0.5,
     xaxis_title="Gols",
     yaxis_title="Jogador",
-    height=700, # Altura adequada para exibir todos os 26 jogadores claramente
-    coloraxis_showscale=False # Esconde a barra de cores lateral para um visual mais limpo
-)
+    height=700, 
+    coloraxis_showscale=False 
 
 st.plotly_chart(fig_gols, use_container_width=True)
 
 st.markdown("---")
 
-# Tabela direta
 st.subheader("📋 Lista de Jogadores")
-st.dataframe(df[['no', 'name', 'pos', 'idade', 'caps', 'goals', 'club']], use_container_width=True, hide_index=True)
+
+colunas_tabela = [
+    'numero', 'nome', 'posicao', 'idade', 'jogos', 'gols', 'clube',
+    'cartoes_amarelos_copa', 'cartoes_vermelhos_copa', 'wikipedia_jogador', 'wikipedia_clube'
+]
+
+st.dataframe(
+    df[colunas_tabela],
+    use_container_width=True,
+    hide_index=True
+)
+

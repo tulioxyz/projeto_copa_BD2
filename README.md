@@ -62,4 +62,14 @@ streamlit run app.py
 * `dados/` - Pasta contendo o CSV com o elenco estruturado da Seleção Brasileira.
 * `app.py` - Script do dashboard do Streamlit contendo os KPIs, gráficos em Plotly e tabelas.
 * `extrair.py` - Script para baixar o JSON bruto da internet e gerar o arquivo CSV de dados consolidados.
+* `documentacao_api.md` - Guia de referência com exemplos em Python da API-Sports filtrado para o Brasil.
 * `requirements.txt` - Lista de dependências de bibliotecas Python.
+
+
+---
+
+## 👥 Desenvolvedores do Projeto
+
+* Atos Marques
+* Eduardo Moreira
+* Túlio Rodrigues
