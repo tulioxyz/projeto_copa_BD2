@@ -9,6 +9,11 @@ st.set_page_config(
     layout="wide"
 )
 
+# Carregar dados
+df = pd.read_csv("dados/jogadores_brasil_convocados_copa_2026.csv")
+df['data_nascimento'] = pd.to_datetime(df['data_nascimento'])
+df['idade'] = df['data_nascimento'].apply(lambda x: (pd.Timestamp.now() - x).days // 365)
+
 
 #Edu
 st.markdown("---")
@@ -84,11 +89,6 @@ st.markdown("""
 
 st.markdown('<div class="main-title">⚽ Seleção Brasileira - Copa do Mundo</div>', unsafe_allow_html=True)
 st.markdown('<div class="subtitle">Artilharia do Elenco</div>', unsafe_allow_html=True)
-
-df = pd.read_csv("dados/jogadores_brasil_convocados_copa_2026.csv")
-
-df['data_nascimento'] = pd.to_datetime(df['data_nascimento'])
-df['idade'] = df['data_nascimento'].apply(lambda x: (pd.Timestamp.now() - x).days // 365)
 
 df_gols = df.sort_values(by='gols', ascending=True)
 
