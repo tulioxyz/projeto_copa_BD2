@@ -59,7 +59,7 @@ Este script faz uma chamada direta para coletar todas as partidas da Seleção B
 ```python
 import requests
 
-API_KEY = "3b317cf02218c6ab25fae3d8d61e2c17"
+API_KEY = "chave"
 BASE_URL = "https://v3.football.api-sports.io"
 
 headers = {
@@ -94,7 +94,7 @@ Este script baixa os jogadores da seleção brasileira e as estatísticas gerais
 ```python
 import requests
 
-API_KEY = "3b317cf02218c6ab25fae3d8d61e2c17"
+API_KEY = "chave"
 BASE_URL = "https://v3.football.api-sports.io"
 
 headers = {

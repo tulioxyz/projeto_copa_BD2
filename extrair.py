@@ -37,6 +37,5 @@ df = df.rename(columns={
     'wcRed': 'cartoes_vermelhos_copa'
 })
 
-# Salva na pasta dados/
 caminho_csv = os.path.join('dados', 'jogadores_brasil_convocados_copa_2026.csv')
 df.to_csv(caminho_csv, index=False)
