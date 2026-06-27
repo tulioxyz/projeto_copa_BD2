@@ -1,0 +1,27 @@
+id,no,pos,name,dob,caps,goals,club,clubNat,clubWiki,captain,wiki,wcApps,wcGoals,wcYellow,wcRed
+alisson,1,GK,Alisson,1992-10-02,78,0,Liverpool,ENG,https://en.wikipedia.org/wiki/Liverpool_F.C.,False,https://en.wikipedia.org/wiki/Alisson_Becker,3,0,0,0
+weverton,12,GK,Weverton,1987-12-13,11,0,Grêmio,BRA,https://en.wikipedia.org/wiki/Gr%C3%AAmio_FBPA,False,https://en.wikipedia.org/wiki/Weverton_(footballer%2C_born_1987),0,0,0,0
+ederson-moraes,23,GK,Ederson Moraes,1993-08-17,32,0,Fenerbahçe,TUR,https://en.wikipedia.org/wiki/Fenerbah%C3%A7e_S.K._(football),False,https://en.wikipedia.org/wiki/Ederson_(footballer%2C_born_1993),0,0,0,0
+gabriel-magalhaes,3,DF,Gabriel Magalhães,1997-12-19,17,1,Arsenal,ENG,https://en.wikipedia.org/wiki/Arsenal_F.C.,False,https://en.wikipedia.org/wiki/Gabriel_Magalh%C3%A3es,3,0,0,0
+marquinhos,4,DF,Marquinhos,1994-05-14,105,7,Paris Saint-Germain,FRA,https://en.wikipedia.org/wiki/Paris_Saint-Germain_FC,False,https://en.wikipedia.org/wiki/Marquinhos,3,0,0,0
+alex-sandro,6,DF,Alex Sandro,1991-01-26,45,2,Flamengo,BRA,https://en.wikipedia.org/wiki/CR_Flamengo,False,https://en.wikipedia.org/wiki/Alex_Sandro,1,0,0,0
+danilo-luiz,13,DF,Danilo Luiz,1991-07-15,70,1,Flamengo,BRA,https://en.wikipedia.org/wiki/CR_Flamengo,False,https://en.wikipedia.org/wiki/Danilo_(footballer%2C_born_July_1991),3,0,1,0
+bremer,14,DF,Bremer,1997-03-18,8,1,Juventus,ITA,https://en.wikipedia.org/wiki/Juventus_FC,False,https://en.wikipedia.org/wiki/Gleison_Bremer,0,0,0,0
+leo-pereira,15,DF,Léo Pereira,1996-01-31,4,0,Flamengo,BRA,https://en.wikipedia.org/wiki/CR_Flamengo,False,https://en.wikipedia.org/wiki/L%C3%A9o_Pereira_(footballer%2C_born_1996),0,0,0,0
+douglas-santos,16,DF,Douglas Santos,1994-03-22,7,0,Zenit Saint Petersburg,RUS,https://en.wikipedia.org/wiki/FC_Zenit_Saint_Petersburg,False,https://en.wikipedia.org/wiki/Douglas_Santos_(footballer%2C_born_1994),3,0,1,0
+roger-ibanez,24,DF,Roger Ibañez,1998-11-23,7,0,Al-Ahli,KSA,https://en.wikipedia.org/wiki/Al-Ahli_Saudi_FC,False,https://en.wikipedia.org/wiki/Roger_Iba%C3%B1ez,1,0,1,0
+ederson-silva,2,MF,Éderson Silva,1999-07-07,3,0,Atalanta,ITA,https://en.wikipedia.org/wiki/Atalanta_BC,False,https://en.wikipedia.org/wiki/%C3%89derson_(footballer%2C_born_1999),1,0,0,0
+casemiro,5,MF,Casemiro,1992-02-23,86,9,Manchester United,ENG,https://en.wikipedia.org/wiki/Manchester_United_F.C.,False,https://en.wikipedia.org/wiki/Casemiro,3,0,1,0
+bruno-guimaraes,8,MF,Bruno Guimarães,1997-11-16,43,3,Newcastle United,ENG,https://en.wikipedia.org/wiki/Newcastle_United_F.C.,False,https://en.wikipedia.org/wiki/Bruno_Guimar%C3%A3es,3,0,0,0
+fabinho,17,MF,Fabinho,1993-10-23,33,0,Al-Ittihad,KSA,https://en.wikipedia.org/wiki/Al-Ittihad_Club_(Jeddah),False,https://en.wikipedia.org/wiki/Fabinho_(footballer%2C_born_1993),2,0,1,0
+danilo-santos,18,MF,Danilo Santos,2001-04-29,4,2,Botafogo,BRA,https://en.wikipedia.org/wiki/Botafogo_FR,False,https://en.wikipedia.org/wiki/Danilo_(footballer%2C_born_2001),2,0,0,0
+lucas-paqueta,20,MF,Lucas Paquetá,1997-08-27,63,13,Flamengo,BRA,https://en.wikipedia.org/wiki/CR_Flamengo,False,https://en.wikipedia.org/wiki/Lucas_Paquet%C3%A1,3,0,0,0
+vinicius-junior,7,FW,Vinícius Júnior,2000-07-12,49,9,Real Madrid,ESP,https://en.wikipedia.org/wiki/Real_Madrid_CF,False,https://en.wikipedia.org/wiki/Vin%C3%ADcius_J%C3%BAnior,3,4,0,0
+matheus-cunha,9,FW,Matheus Cunha,1999-05-27,23,1,Manchester United,ENG,https://en.wikipedia.org/wiki/Manchester_United_F.C.,False,https://en.wikipedia.org/wiki/Matheus_Cunha,3,3,0,0
+neymar,10,FW,Neymar,1992-02-05,128,79,Santos,BRA,https://en.wikipedia.org/wiki/Santos_FC,False,https://en.wikipedia.org/wiki/Neymar,1,0,0,0
+raphinha,11,FW,Raphinha,1996-12-14,39,11,Barcelona,ESP,https://en.wikipedia.org/wiki/FC_Barcelona,False,https://en.wikipedia.org/wiki/Raphinha,2,0,0,0
+endrick,19,FW,Endrick,2006-07-21,17,4,Lyon,FRA,https://en.wikipedia.org/wiki/Olympique_Lyonnais,False,https://en.wikipedia.org/wiki/Endrick_(footballer%2C_born_2006),2,0,0,0
+luiz-henrique,21,FW,Luiz Henrique,2001-01-02,15,2,Zenit Saint Petersburg,RUS,https://en.wikipedia.org/wiki/FC_Zenit_Saint_Petersburg,False,https://en.wikipedia.org/wiki/Luiz_Henrique_(footballer%2C_born_2001),1,0,0,0
+gabriel-martinelli,22,FW,Gabriel Martinelli,2001-06-18,23,4,Arsenal,ENG,https://en.wikipedia.org/wiki/Arsenal_F.C.,False,https://en.wikipedia.org/wiki/Gabriel_Martinelli,2,0,0,0
+igor-thiago,25,FW,Igor Thiago,2001-06-26,4,2,Brentford,ENG,https://en.wikipedia.org/wiki/Brentford_F.C.,False,https://en.wikipedia.org/wiki/Igor_Thiago,1,0,0,0
+rayan,26,FW,Rayan,2006-08-03,2,1,Bournemouth,ENG,https://en.wikipedia.org/wiki/AFC_Bournemouth,False,https://en.wikipedia.org/wiki/Rayan_(footballer%2C_born_2006),2,0,0,0
