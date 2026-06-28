@@ -29,18 +29,26 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 st.markdown('<div class="main-title">⚽ Seleção Brasileira - Copa do Mundo</div>', unsafe_allow_html=True)
-st.markdown('<div class="subtitle">Artilharia do Elenco</div>', unsafe_allow_html=True)
+st.markdown('<div class="subtitle">Artilharia do Elenco Copa do Mundo 2026</div>', unsafe_allow_html=True)
 
 # Carregar dados
 df = pd.read_csv("dados/jogadores_brasil_convocados_copa_2026.csv")
 df['data_nascimento'] = pd.to_datetime(df['data_nascimento'])
 df['idade'] = df['data_nascimento'].apply(lambda x: (pd.Timestamp.now() - x).days // 365)
 
+posicao_map = {
+    "GK": "Goleiro",
+    "DF": "Defensor",
+    "MF": "Meio-campista",
+    "FW": "Atacante"
+}
+df['posicao'] = df['posicao'].map(posicao_map).fillna(df['posicao'])
+
 
 #Edu
 st.markdown("---")
 
-st.subheader("🥇 Top 10 Maiores Goleadores")
+st.markdown("<h3 style='text-align: center;'>🥇 Top 10 Maiores Goleadores</h3>", unsafe_allow_html=True)
 
 top10 = df.sort_values(by="gols", ascending=False).head(10)
 
@@ -58,8 +66,8 @@ fig_top10 = px.bar(
 )
 
 fig_top10.update_layout(
-    title_x=0.5,
     yaxis=dict(categoryorder="total ascending"),
+    xaxis=dict(showgrid=True),
     coloraxis_showscale=False
 )
 
@@ -67,7 +75,7 @@ st.plotly_chart(fig_top10, use_container_width=True)
 
 st.markdown("---")
 
-st.subheader("📊 Quantidade de Jogadores por Posição")
+st.markdown("<h3 style='text-align: center;'>📊 Quantidade de Jogadores por Posição</h3>", unsafe_allow_html=True)
 
 grafico_posicao = df["posicao"].value_counts().reset_index()
 grafico_posicao.columns = ["Posição", "Quantidade"]
@@ -81,7 +89,6 @@ fig_posicao = px.bar(
 )
 
 fig_posicao.update_layout(
-    title_x=0.5,
     yaxis_title="Quantidade de Jogadores"
 )
 
