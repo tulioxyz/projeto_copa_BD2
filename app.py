@@ -115,8 +115,7 @@ def fetch_team_players(api_key, season, page):
     return None
 
 @st.cache_data(ttl=86400)
-def get_all_players_wc2022():
-    api_key = os.getenv("API_KEY")
+def get_all_players_wc2022(api_key):
     if not api_key:
         return []
     all_players = []
@@ -127,7 +126,11 @@ def get_all_players_wc2022():
     return all_players
 
 def get_top10_detailed_stats(top10_names):
-    all_players = get_all_players_wc2022()
+    api_key = os.getenv("API_KEY")
+    if not api_key and "API_KEY" in st.secrets:
+        api_key = st.secrets["API_KEY"]
+        
+    all_players = get_all_players_wc2022(api_key)
     if not all_players:
         return pd.DataFrame()
         
@@ -178,7 +181,11 @@ def get_top10_detailed_stats(top10_names):
     return pd.DataFrame(player_data)
 
 def get_players_ratings_wc2022(csv_names):
-    all_players = get_all_players_wc2022()
+    api_key = os.getenv("API_KEY")
+    if not api_key and "API_KEY" in st.secrets:
+        api_key = st.secrets["API_KEY"]
+        
+    all_players = get_all_players_wc2022(api_key)
     if not all_players:
         return pd.DataFrame()
         
