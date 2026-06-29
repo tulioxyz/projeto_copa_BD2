@@ -380,11 +380,19 @@ else:
                 text="gols",
                 color="gols",
                 labels={"nome": "Jogador", "gols": "Gols"},
-                color_continuous_scale=['#009c3b', '#ffdf00']
+                color_continuous_scale=['#009c3b', '#ffdf00'],
+                range_x=[0, 82]
             )
             fig_top10.update_layout(
                 yaxis=dict(categoryorder="total ascending"),
-                xaxis=dict(showgrid=True, gridcolor='rgba(128, 128, 128, 0.2)', griddash='dash', range=[0, 80]),
+                xaxis=dict(
+                    showgrid=True,
+                    gridcolor='rgba(128, 128, 128, 0.2)',
+                    griddash='dash',
+                    range=[0, 82],
+                    autorange=False,
+                    tickvals=[0, 10, 20, 30, 40, 50, 60, 70, 80]
+                ),
                 coloraxis_showscale=False,
                 plot_bgcolor="rgba(0,0,0,0)",
                 paper_bgcolor="rgba(0,0,0,0)",
@@ -420,7 +428,6 @@ else:
             )
             st.plotly_chart(fig_posicao, use_container_width=True)
 
-    st.markdown("---")
     col_graf3, col_graf4 = st.columns(2)
 
     # Desempenho Detalhado do Top 5 Goleadores Na Última Copa do Mundo (2022)
@@ -527,6 +534,89 @@ else:
                 st.markdown("<div style='height: 85px;'></div>", unsafe_allow_html=True)
             else:
                 st.info("Nenhuma nota disponível na API para os jogadores selecionados (não estiveram na Copa de 2022).")
+
+    col_graf5, col_graf6 = st.columns(2)
+    
+    # Top 10 com Maior Média de Gols por Jogo
+    with col_graf5:
+        with st.container(border=True):
+            st.markdown("#### Top 10 com Maior Média de Gols por Jogo")
+            df_media = df_filtrado.copy()
+            df_media = df_media[df_media["jogos"] > 0]
+            df_media["Média de Gols"] = (df_media["gols"] / df_media["jogos"]).round(2)
+            top_media = df_media.sort_values(by="Média de Gols", ascending=False).head(10)
+            
+            if not top_media.empty:
+                fig_media = px.bar(
+                    top_media,
+                    x="Média de Gols",
+                    y="nome",
+                    orientation="h",
+                    text="Média de Gols",
+                    color="Média de Gols",
+                    color_continuous_scale=['#0c2310', '#009c3b', '#2ecc71'],
+                    labels={"nome": "Jogador", "Média de Gols": "Média de Gols"},
+                    range_x=[0, 0.72]
+                )
+                fig_media.update_layout(
+                    yaxis=dict(categoryorder="total ascending", title=dict(text="Jogador", standoff=15)),
+                    xaxis=dict(
+                        title=dict(text="Média de Gols", standoff=15),
+                        showgrid=True,
+                        gridcolor='rgba(128, 128, 128, 0.2)',
+                        griddash='dash',
+                        range=[0, 0.72],
+                        autorange=False,
+                        tickvals=[0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7]
+                    ),
+                    coloraxis_showscale=False,
+                    plot_bgcolor="rgba(0,0,0,0)",
+                    paper_bgcolor="rgba(0,0,0,0)",
+                    font_color="#ffffff",
+                    height=450,
+                    margin=dict(l=130, r=20, t=25, b=50)
+                )
+                st.plotly_chart(fig_media, use_container_width=True)
+            else:
+                st.info("Nenhum jogador com partidas jogadas para calcular a média.")
+
+    # Clubes com Mais Jogadores Convocados
+    with col_graf6:
+        with st.container(border=True):
+            st.markdown("#### Clubes com Mais Jogadores Convocados")
+            clubes = df_filtrado["clube"].value_counts().reset_index()
+            clubes.columns = ["Clube", "Quantidade"]
+            top_clubes = clubes.head(10)
+            
+            if not top_clubes.empty:
+                fig_clubes = px.bar(
+                    top_clubes,
+                    x="Quantidade",
+                    y="Clube",
+                    orientation="h",
+                    text="Quantidade",
+                    color="Quantidade",
+                    color_continuous_scale=['#002776', '#1f77b4', '#90caf9'],
+                    labels={"Clube": "Clube", "Quantidade": "Quantidade"}
+                )
+                fig_clubes.update_layout(
+                    yaxis=dict(categoryorder="total ascending", title=dict(text="Clube", standoff=15)),
+                    xaxis=dict(
+                        title=dict(text="Quantidade", standoff=15),
+                        showgrid=True,
+                        gridcolor='rgba(128, 128, 128, 0.2)',
+                        griddash='dash'
+                    ),
+                    coloraxis_showscale=False,
+                    plot_bgcolor="rgba(0,0,0,0)",
+                    paper_bgcolor="rgba(0,0,0,0)",
+                    font_color="#ffffff",
+                    height=450,
+                    margin=dict(l=130, r=20, t=25, b=50)
+                )
+                st.plotly_chart(fig_clubes, use_container_width=True)
+            else:
+                st.info("Nenhum clube encontrado com os filtros selecionados.")
 
 st.markdown("---")
 # Tabela: Informações Gerais do Elenco Atual
