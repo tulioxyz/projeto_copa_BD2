@@ -155,6 +155,8 @@ df['posicao'] = df['posicao'].map(posicao_map).fillna(df['posicao'])
 st.sidebar.markdown("## Filtros")
 st.sidebar.markdown("Use os filtros abaixo para explorar o elenco:")
 
+busca_nome = st.sidebar.text_input("Buscar Jogador pelo Nome", "")
+
 posicoes_disponiveis = sorted(df["posicao"].unique())
 posicoes_escolhidas = st.sidebar.multiselect(
     "Posição",
@@ -184,6 +186,9 @@ df_filtrado = df[
     (df["idade"] <= intervalo_idade[1]) &
     (df["clube"].isin(clubes_escolhidos))
 ]
+
+if busca_nome:
+    df_filtrado = df_filtrado[df_filtrado["nome"].str.contains(busca_nome, case=False)]
 
 st.sidebar.markdown("---")
 st.sidebar.markdown(f"**{len(df_filtrado)} jogadores** encontrados com os filtros aplicados.")
@@ -360,6 +365,121 @@ def get_players_ratings_wc2022(csv_names):
     return df_ratings
 
 
+def get_players_wc2022_scatter_data(csv_names):
+    api_key = os.getenv("API_KEY")
+    if not api_key and "API_KEY" in st.secrets:
+        api_key = st.secrets["API_KEY"]
+        
+    all_players = get_all_players_wc2022(api_key)
+    if not all_players:
+        return pd.DataFrame()
+        
+    scatter_data = []
+    
+    for target_name in csv_names:
+        found = False
+        for p in all_players:
+            p_name = p["player"]["name"] or ""
+            p_first = p["player"].get("firstname") or ""
+            p_last = p["player"].get("lastname") or ""
+            full_name = f"{p_name} {p_first} {p_last}".lower()
+            
+            target_words = target_name.lower().split()
+            if all(w in full_name for w in target_words):
+                for stat in p["statistics"]:
+                    if stat["team"]["id"] == 6 and stat["league"]["id"] == 1:
+                        rating_str = stat["games"].get("rating")
+                        minutes = stat["games"].get("minutes") or 0
+                        goals = stat["goals"].get("total") or 0
+                        
+                        if minutes > 0:
+                            try:
+                                rating_val = float(rating_str) if rating_str else 6.0
+                                match_row = df[df["nome"] == target_name]
+                                pos = match_row["posicao"].values[0] if not match_row.empty else "Outra"
+                                
+                                scatter_data.append({
+                                    "Jogador": target_name,
+                                    "Minutos": minutes,
+                                    "Gols": goals,
+                                    "Nota": round(rating_val, 2),
+                                    "Posição": pos
+                                })
+                                found = True
+                                break
+                            except ValueError:
+                                pass
+                if found:
+                    break
+                    
+    return pd.DataFrame(scatter_data)
+
+
+def get_position_radar_data(csv_names):
+    api_key = os.getenv("API_KEY")
+    if not api_key and "API_KEY" in st.secrets:
+        api_key = st.secrets["API_KEY"]
+        
+    all_players = get_all_players_wc2022(api_key)
+    if not all_players:
+        return pd.DataFrame()
+        
+    position_stats = []
+    
+    for target_name in csv_names:
+        found = False
+        for p in all_players:
+            p_name = p["player"]["name"] or ""
+            p_first = p["player"].get("firstname") or ""
+            p_last = p["player"].get("lastname") or ""
+            full_name = f"{p_name} {p_first} {p_last}".lower()
+            
+            target_words = target_name.lower().split()
+            if all(w in full_name for w in target_words):
+                for stat in p["statistics"]:
+                    if stat["team"]["id"] == 6 and stat["league"]["id"] == 1:
+                        g = stat["goals"].get("total") or 0
+                        a = stat["goals"].get("assists") or 0
+                        s = stat["shots"].get("total") or 0
+                        d = stat["dribbles"].get("success") or 0
+                        p_tot = stat["passes"].get("total") or 0
+                        apps = stat["games"].get("appearences") or 0
+                        
+                        if apps > 0:
+                            match_row = df[df["nome"] == target_name]
+                            pos = match_row["posicao"].values[0] if not match_row.empty else "Outra"
+                            
+                            position_stats.append({
+                                "Posição": pos,
+                                "Gols/Jogo": g / apps,
+                                "Assistências/Jogo": a / apps,
+                                "Chutes/Jogo": s / apps,
+                                "Dribles/Jogo": d / apps,
+                                "Passes/Jogo": p_tot / apps
+                            })
+                            found = True
+                            break
+                if found:
+                    break
+                    
+    if not position_stats:
+        return pd.DataFrame()
+        
+    df_stats = pd.DataFrame(position_stats)
+    df_avg = df_stats.groupby("Posição").mean().reset_index()
+    
+    metrics = ["Gols/Jogo", "Assistências/Jogo", "Chutes/Jogo", "Dribles/Jogo", "Passes/Jogo"]
+    for m in metrics:
+        max_val = df_avg[m].max()
+        if max_val > 0:
+            df_avg[m] = (df_avg[m] / max_val * 100).round(1)
+        else:
+            df_avg[m] = 0.0
+            
+    melted = df_avg.melt(id_vars="Posição", var_name="Métrica", value_name="Valor")
+    return melted
+
+
 # graficos
 if df_filtrado.empty:
     st.warning("Nenhum jogador encontrado com os filtros selecionados.")
@@ -430,14 +550,97 @@ else:
 
     col_graf3, col_graf4 = st.columns(2)
 
-    # Desempenho Detalhado do Top 5 Goleadores Na Última Copa do Mundo (2022)
+    # Top 10 com Maior Média de Gols por Jogo
     with col_graf3:
+        with st.container(border=True):
+            st.markdown("#### Top 10 com Maior Média de Gols por Jogo")
+            df_media = df_filtrado.copy()
+            df_media = df_media[df_media["jogos"] > 0]
+            df_media["Média de Gols"] = (df_media["gols"] / df_media["jogos"]).round(2)
+            top_media = df_media.sort_values(by="Média de Gols", ascending=False).head(10)
+            
+            if not top_media.empty:
+                fig_media = px.bar(
+                    top_media,
+                    x="Média de Gols",
+                    y="nome",
+                    orientation="h",
+                    text="Média de Gols",
+                    color="Média de Gols",
+                    color_continuous_scale=['#009c3b', '#ffdf00'],
+                    labels={"nome": "Jogador", "Média de Gols": "Média de Gols"},
+                    range_x=[0, 0.72]
+                )
+                fig_media.update_layout(
+                    yaxis=dict(categoryorder="total ascending", title=dict(text="Jogador", standoff=15)),
+                    xaxis=dict(
+                        title=dict(text="Média de Gols", standoff=15),
+                        showgrid=True,
+                        gridcolor='rgba(128, 128, 128, 0.2)',
+                        griddash='dash',
+                        range=[0, 0.72],
+                        autorange=False,
+                        tickvals=[0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7]
+                    ),
+                    coloraxis_showscale=False,
+                    plot_bgcolor="rgba(0,0,0,0)",
+                    paper_bgcolor="rgba(0,0,0,0)",
+                    font_color="#ffffff",
+                    height=450,
+                    margin=dict(l=130, r=20, t=25, b=50)
+                )
+                st.plotly_chart(fig_media, use_container_width=True)
+            else:
+                st.info("Nenhum jogador com partidas jogadas para calcular a média.")
+
+    # Clubes com Mais Jogadores Convocados
+    with col_graf4:
+        with st.container(border=True):
+            st.markdown("#### Clubes com Mais Jogadores Convocados")
+            clubes = df_filtrado["clube"].value_counts().reset_index()
+            clubes.columns = ["Clube", "Quantidade"]
+            top_clubes = clubes.head(10)
+            
+            if not top_clubes.empty:
+                fig_clubes = px.bar(
+                    top_clubes,
+                    x="Quantidade",
+                    y="Clube",
+                    orientation="h",
+                    text="Quantidade",
+                    color="Quantidade",
+                    color_continuous_scale=['#009c3b', '#ffdf00'],
+                    labels={"Clube": "Clube", "Quantidade": "Quantidade"}
+                )
+                fig_clubes.update_layout(
+                    yaxis=dict(categoryorder="total ascending", title=dict(text="Clube", standoff=15)),
+                    xaxis=dict(
+                        title=dict(text="Quantidade", standoff=15),
+                        showgrid=True,
+                        gridcolor='rgba(128, 128, 128, 0.2)',
+                        griddash='dash'
+                    ),
+                    coloraxis_showscale=False,
+                    plot_bgcolor="rgba(0,0,0,0)",
+                    paper_bgcolor="rgba(0,0,0,0)",
+                    font_color="#ffffff",
+                    height=450,
+                    margin=dict(l=130, r=20, t=25, b=50)
+                )
+                st.plotly_chart(fig_clubes, use_container_width=True)
+            else:
+                st.info("Nenhum clube encontrado com os filtros selecionados.")
+
+    col_graf5, col_graf6 = st.columns(2)
+
+    # Desempenho Detalhado do Top 5 Goleadores Na Última Copa do Mundo (2022)
+    with col_graf5:
         with st.container(border=True):
             st.markdown("#### Desempenho Detalhado do Top 5 Goleadores na Copa 2022")
             top5_names_list = top10["nome"].head(5).tolist()
             df_detalhado = get_top10_detailed_stats(top5_names_list)
             
-            if not df_detalhado.empty:
+            if not df_detalhado.empty and df_detalhado["Quantidade"].sum() > 0:
                 metricas_disponiveis = df_detalhado["Métrica"].unique().tolist()
                 metricas_selecionadas = st.multiselect(
                     "Filtrar métricas:",
@@ -482,10 +685,10 @@ else:
                 )
                 st.plotly_chart(fig_detalhado, use_container_width=True)
             else:
-                st.info("Nenhuma métrica detalhada disponível na API para os jogadores selecionados.")
+                st.info("Nenhum jogador selecionado participou da Copa de 2022 para mostrar métricas detalhadas.")
 
     # Avaliação de Desempenho (Notas) dos Convocados Atuais na Copa de 2022
-    with col_graf4:
+    with col_graf6:
         with st.container(border=True):
             st.markdown("#### Avaliação de Desempenho (Notas) na Copa 2022")
             csv_names_list = df_filtrado["nome"].tolist()
@@ -533,90 +736,120 @@ else:
                 st.plotly_chart(fig_notas, use_container_width=True, theme=None)
                 st.markdown("<div style='height: 85px;'></div>", unsafe_allow_html=True)
             else:
-                st.info("Nenhuma nota disponível na API para os jogadores selecionados (não estiveram na Copa de 2022).")
+                st.info("Nenhum jogador selecionado participou da Copa de 2022 para mostrar notas médias.")
 
-    col_graf5, col_graf6 = st.columns(2)
+    col_graf7, col_graf8 = st.columns(2)
     
-    # Top 10 com Maior Média de Gols por Jogo
-    with col_graf5:
+    # Eficiência na Copa 2022: Minutos vs. Gols
+    with col_graf7:
         with st.container(border=True):
-            st.markdown("#### Top 10 com Maior Média de Gols por Jogo")
-            df_media = df_filtrado.copy()
-            df_media = df_media[df_media["jogos"] > 0]
-            df_media["Média de Gols"] = (df_media["gols"] / df_media["jogos"]).round(2)
-            top_media = df_media.sort_values(by="Média de Gols", ascending=False).head(10)
+            st.markdown("#### Eficiência na Copa 2022: Minutos vs. Gols")
+            csv_names_list = df_filtrado["nome"].tolist()
+            df_scatter = get_players_wc2022_scatter_data(csv_names_list)
             
-            if not top_media.empty:
-                fig_media = px.bar(
-                    top_media,
-                    x="Média de Gols",
-                    y="nome",
-                    orientation="h",
-                    text="Média de Gols",
-                    color="Média de Gols",
-                    color_continuous_scale=['#0c2310', '#009c3b', '#2ecc71'],
-                    labels={"nome": "Jogador", "Média de Gols": "Média de Gols"},
-                    range_x=[0, 0.72]
+            if not df_scatter.empty:
+                fig_scatter = px.scatter(
+                    df_scatter,
+                    x="Minutos",
+                    y="Gols",
+                    size="Nota",
+                    color="Posição",
+                    hover_name="Jogador",
+                    size_max=22,
+                    color_discrete_map={
+                        "Atacante": "#009c3b",
+                        "Meio-campista": "#ffdf00",
+                        "Defensor": "#002776",
+                        "Goleiro": "#a5a5a5"
+                    },
+                    labels={"Minutos": "Minutos Jogados", "Gols": "Gols Marcados", "Nota": "Nota Média", "Posição": "Posição"}
                 )
-                fig_media.update_layout(
-                    yaxis=dict(categoryorder="total ascending", title=dict(text="Jogador", standoff=15)),
+                
+                max_goals = int(df_scatter["Gols"].max())
+                y_ticks = list(range(0, max_goals + 2))
+                
+                fig_scatter.update_layout(
                     xaxis=dict(
-                        title=dict(text="Média de Gols", standoff=15),
-                        showgrid=True,
-                        gridcolor='rgba(128, 128, 128, 0.2)',
-                        griddash='dash',
-                        range=[0, 0.72],
-                        autorange=False,
-                        tickvals=[0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7]
-                    ),
-                    coloraxis_showscale=False,
-                    plot_bgcolor="rgba(0,0,0,0)",
-                    paper_bgcolor="rgba(0,0,0,0)",
-                    font_color="#ffffff",
-                    height=450,
-                    margin=dict(l=130, r=20, t=25, b=50)
-                )
-                st.plotly_chart(fig_media, use_container_width=True)
-            else:
-                st.info("Nenhum jogador com partidas jogadas para calcular a média.")
-
-    # Clubes com Mais Jogadores Convocados
-    with col_graf6:
-        with st.container(border=True):
-            st.markdown("#### Clubes com Mais Jogadores Convocados")
-            clubes = df_filtrado["clube"].value_counts().reset_index()
-            clubes.columns = ["Clube", "Quantidade"]
-            top_clubes = clubes.head(10)
-            
-            if not top_clubes.empty:
-                fig_clubes = px.bar(
-                    top_clubes,
-                    x="Quantidade",
-                    y="Clube",
-                    orientation="h",
-                    text="Quantidade",
-                    color="Quantidade",
-                    color_continuous_scale=['#002776', '#1f77b4', '#90caf9'],
-                    labels={"Clube": "Clube", "Quantidade": "Quantidade"}
-                )
-                fig_clubes.update_layout(
-                    yaxis=dict(categoryorder="total ascending", title=dict(text="Clube", standoff=15)),
-                    xaxis=dict(
-                        title=dict(text="Quantidade", standoff=15),
+                        title=dict(text="Minutos Jogados", standoff=15),
                         showgrid=True,
                         gridcolor='rgba(128, 128, 128, 0.2)',
                         griddash='dash'
                     ),
-                    coloraxis_showscale=False,
+                    yaxis=dict(
+                        title=dict(text="Gols Marcados", standoff=15),
+                        showgrid=True,
+                        gridcolor='rgba(128, 128, 128, 0.2)',
+                        griddash='dash',
+                        tickvals=y_ticks
+                    ),
                     plot_bgcolor="rgba(0,0,0,0)",
                     paper_bgcolor="rgba(0,0,0,0)",
                     font_color="#ffffff",
                     height=450,
-                    margin=dict(l=130, r=20, t=25, b=50)
+                    margin=dict(l=70, r=20, t=25, b=50),
+                    legend=dict(
+                        orientation="h",
+                        yanchor="bottom",
+                        y=-0.25,
+                        xanchor="center",
+                        x=0.5,
+                        title=None
+                    )
                 )
-                st.plotly_chart(fig_clubes, use_container_width=True)
+                st.plotly_chart(fig_scatter, use_container_width=True)
             else:
-                st.info("Nenhum clube encontrado com os filtros selecionados.")
+                st.info("Nenhum jogador selecionado participou da Copa de 2022 para mostrar minutos jogados.")
+
+    # Comparativo de Desempenho por Posição"
+    with col_graf8:
+        with st.container(border=True):
+            st.markdown("#### Comparativo de Desempenho por Posição")
+            csv_names_list = df_filtrado["nome"].tolist()
+            df_radar = get_position_radar_data(csv_names_list)
+            
+            if not df_radar.empty:
+                fig_radar = px.line_polar(
+                    df_radar,
+                    r="Valor",
+                    theta="Métrica",
+                    color="Posição",
+                    line_close=True,
+                    color_discrete_map={
+                        "Atacante": "#00e676",
+                        "Meio-campista": "#ffeb3b",
+                        "Defensor": "#2979ff",
+                        "Goleiro": "#ffffff"
+                    },
+                    labels={"Valor": "Média Relativa (%)", "Métrica": "Métrica", "Posição": "Posição"}
+                )
+                fig_radar.update_traces(
+                    fill="toself",
+                    opacity=0.45,
+                    line=dict(width=3.5)
+                )
+                fig_radar.update_layout(
+                    polar=dict(
+                        bgcolor="#222224",
+                        radialaxis=dict(visible=True, range=[0, 100], gridcolor='rgba(128, 128, 128, 0.2)'),
+                        angularaxis=dict(gridcolor='rgba(128, 128, 128, 0.2)')
+                    ),
+                    plot_bgcolor="rgba(0,0,0,0)",
+                    paper_bgcolor="rgba(0,0,0,0)",
+                    font_color="#ffffff",
+                    height=450,
+                    margin=dict(l=70, r=70, t=25, b=50),
+                    legend=dict(
+                        orientation="h",
+                        yanchor="bottom",
+                        y=-0.25,
+                        xanchor="center",
+                        x=0.5,
+                        title=None
+                    )
+                )
+                st.plotly_chart(fig_radar, use_container_width=True)
+            else:
+                st.info("Nenhum jogador selecionado participou da Copa de 2022 para mostrar dados de desempenho.")
 
 st.markdown("---")
 # Tabela: Informações Gerais do Elenco Atual
@@ -644,7 +877,7 @@ st.markdown("---")
 st.markdown(
     "<p style='text-align:center; color:#b3b3b3; font-size:0.8rem;'>"
     "Dashboard criado com Python + Streamlit + Plotly | "
-    "Dados da Copa do Mundo de 2022 obtidos via API-Sports"
+    "Dados gerais consolidados a partir de arquivo JSON/CSV local integrados com dados da Copa de 2022 obtidos via API-Sports"
     "</p>",
     unsafe_allow_html=True
 )

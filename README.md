@@ -1,5 +1,7 @@
 # Projeto Copa BD2 - Solução Analítica para a Seleção Brasileira
 
+🔗 **Acesse o Dashboard Online:** [Streamlit Cloud App](https://projetocopabd2-rg45nzrkn2mgv2ddnsk6cn.streamlit.app/)
+
 ## 📋 Contexto do Projeto
 
 Você foi contratado(a) como Analista de Dados da Seleção Brasileira e integra a equipe responsável por apoiar o processo de preparação para a Copa do Mundo. 
